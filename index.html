@@ -170,6 +170,7 @@ details.how{background:var(--panel2);border:2px dashed var(--line);padding:8px 1
 .w{cursor:pointer}.w.kn{border-bottom:2px solid var(--green)}
 .wpop{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:45;width:min(460px,calc(100% - 24px));background:var(--panel);border:3px solid var(--cyan);box-shadow:6px 6px 0 var(--shadow);padding:14px;display:flex;flex-direction:column;gap:10px}
 @media (max-width:820px){.wpop{bottom:calc(84px + env(safe-area-inset-bottom,0px))}}
+.wusteps{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:17px;font-weight:700}
 .toast .undo{margin-left:10px;font:inherit;font-weight:800;background:var(--on);color:var(--yellow);border:0;padding:4px 10px;cursor:pointer}
 .toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--yellow);color:var(--on);font-weight:800;font-size:20px;padding:10px 18px;border:3px solid var(--bg);box-shadow:4px 4px 0 var(--shadow);z-index:50}
 .word{font-weight:800;font-size:44px;line-height:1}
@@ -568,9 +569,9 @@ function gain(n,stat){var before=lvl();S.xp+=n;if(stat)S.statXp[stat]=(S.statXp[
 /* ---------- маршруты ---------- */
 var PAGES=[
  {id:'home',n:'Главная'},{id:'week',n:'Неделя'},{id:'habits',n:'Привычки'},{id:'english',n:'Английский'},
- {id:'piano',n:'Фортепиано'},{id:'health',n:'Здоровье'},{id:'money',n:'Финансы'}
+ {id:'piano',n:'Фортепиано'},{id:'health',n:'Здоровье'},{id:'blog',n:'Блог'}
 ];
-var MORE=[{id:'move',n:'Переезд в США'},{id:'blog',n:'Блог'},{id:'books',n:'Книги и игры'},{id:'ai',n:'Нейросети'},{id:'goals',n:'Цели'}];
+var MORE=[{id:'move',n:'Переезд в США'},{id:'money',n:'Финансы'},{id:'books',n:'Книги и игры'},{id:'ai',n:'Нейросети'},{id:'goals',n:'Цели'}];
 var ALL={};PAGES.concat(MORE).forEach(function(p){ALL[p.id]=p;});ALL.hero={n:'Персонаж'};
 function route(){var h=(location.hash||'').replace('#','');return ALL[h]?h:'home';}
 
@@ -580,10 +581,10 @@ function navHtml(){
   document.getElementById('moreMenu').innerHTML=MORE.map(function(p){return '<a href="#'+p.id+'" class="'+(r===p.id?'on':'')+'">'+p.n+'</a>';}).join('');
   var mb=document.getElementById('moreBtn');mb.classList.toggle('c-yellow',MORE.some(function(p){return p.id===r;}));
   var bn=[{id:'home',n:'Главная'},{id:'week',n:'Неделя'},{id:'habits',n:'Привычки'},{id:'english',n:'Англ.'}];
-  document.getElementById('bnav').innerHTML=bn.map(function(p){return '<a href="#'+p.id+'" class="'+(r===p.id?'on':'')+'">'+p.n+'</a>';}).join('')+'<button data-a="sheet" class="'+(['piano','health','money'].concat(MORE.map(function(m){return m.id;})).indexOf(r)>=0?'on':'')+'">Ещё</button>';
-  document.getElementById('sheetIn').innerHTML=['piano','health','money'].map(function(id){return ALL[id];}).concat(MORE).map(function(p){return '<a href="#'+(p.id||'')+'">'+p.n+'</a>';}).join('');
+  document.getElementById('bnav').innerHTML=bn.map(function(p){return '<a href="#'+p.id+'" class="'+(r===p.id?'on':'')+'">'+p.n+'</a>';}).join('')+'<button data-a="sheet" class="'+(['piano','health','blog'].concat(MORE.map(function(m){return m.id;})).indexOf(r)>=0?'on':'')+'">Ещё</button>';
+  document.getElementById('sheetIn').innerHTML=['piano','health','blog'].map(function(id){return ALL[id];}).concat(MORE).map(function(p){return '<a href="#'+(p.id||'')+'">'+p.n+'</a>';}).join('');
   // sheet links need ids
-  var links=document.querySelectorAll('#sheetIn a');var ids=['piano','health','money'].concat(MORE.map(function(m){return m.id;}));links.forEach(function(a,i){a.setAttribute('href','#'+ids[i]);});
+  var links=document.querySelectorAll('#sheetIn a');var ids=['piano','health','blog'].concat(MORE.map(function(m){return m.id;}));links.forEach(function(a,i){a.setAttribute('href','#'+ids[i]);});
 }
 function headerStats(){
   document.getElementById('meLvl').textContent='LVL '+lvl();
@@ -791,7 +792,7 @@ V.home=function(){
     '<div class="row" style="justify-content:center">'+(timer.run?'<button class="btn b-pink" data-a="stopFocus">Стоп и засчитать</button>':'<button class="btn b-cyan" data-a="startFocus">▶ Старт 25 мин</button>')+'</div>':
     '<div style="text-align:center;font-size:20px">Встань, разомнись, попей воды. Экран можно не трогать.</div><div class="row" style="justify-content:center"><button class="btn b-ghost" data-a="skipBreak">Пропустить перерыв</button></div>')+
     '<div class="muted" style="text-align:center;font-size:16px">Помодоро: 25 мин фокуса → 5 мин отдыха, после 4 помидоров отдых 15 мин. 1 минута = 1 XP, полный помидор +1 ★</div>')+
-  pn('s4','Слово дня','c-pink',null,'<div class="row"><span style="font-size:34px">'+wd.e+'</span><span class="word">'+esc(wd.w)+'</span></div><div style="font-size:21px">'+esc(wd.tr)+'</div><div class="row"><button class="btn b-pink" data-a="speak" data-w="'+esc(wd.w)+'">♪ Послушать</button><a class="btn b-ghost" href="#english" style="text-decoration:none">Словарь</a></div>'+(wd.none?'<div class="muted" style="font-size:17px">Все слова из запаса пройдены!</div>':'<div class="row"><button class="btn b-cyan" data-a="wKnow">Уже знаю</button>'+(wd.inDict?'<span class="tag c-green">в словаре ✓</span>':'<button class="btn b-orange" data-a="wLearn">Учить</button>')+'</div>'))+
+  pn('s4','Слово дня','c-pink',null,'<div class="row"><span style="font-size:34px">'+wd.e+'</span><span class="word">'+esc(wd.w)+'</span></div><div style="font-size:21px">'+esc(wd.tr)+'</div><div class="row"><button class="btn b-pink" data-a="speak" data-w="'+esc(wd.w)+'">♪ Послушать</button><a class="btn b-ghost" href="#english" style="text-decoration:none">Словарь</a></div>'+(wd.none?'<div class="muted" style="font-size:17px">Все слова из запаса пройдены!</div>':'<div class="row"><button class="btn b-cyan" data-a="wKnow">Уже знаю</button>'+(wd.inDict?'<span class="tag c-green">в словаре ✓</span>':'<button class="btn b-orange" data-a="wLearn">Учить</button>')+'</div>')+'<div class="row">'+(S.warm&&S.warm[TD]?'<span class="tag c-green">разминка ✓</span>':'<button class="btn b-pink" data-a="goWarm">Разминка 10 мин</button>')+'</div>')+
   pn('s4','Карта месяца','c-orange',MONTHS1[TODAY.getMonth()],monthCal(dayStatus)+'<div class="muted" style="font-size:16px">розовый: все привычки · лиловый: частично</div>')+
   pn('s4','Итог дня','c-yellow',closed?'сохранено':(evening?'пора':'с 20:00'),
     closed?'<div style="font-size:21px">День сохранён. Невыполненное уже на завтра.</div>':
@@ -869,7 +870,7 @@ var TEST=[
 ];
 var EXAMS={IELTS:[['Listening','30 мин','4 части, 40 вопросов',30],['Reading','60 мин','3 текста, 40 вопросов',60],['Writing','60 мин','график + эссе',60],['Speaking','11–14 мин','интервью с экзаменатором',14]],
            TOEFL:[['Reading','~30 мин','академические тексты',30],['Listening','~30 мин','лекции и диалоги',30],['Writing','~30 мин','эссе и ответ на дискуссию',30],['Speaking','~16 мин','ответы на вопросы в микрофон',16]]};
-var EN={tab:'words',card:0,flip:false,text:0,mode:'read',shuffle:null,picked:[],test:{i:0,score:0,on:false},exam:{sec:0,run:false,h:null,name:''}};
+var EN={tab:'warm',card:0,flip:false,text:0,mode:'read',shuffle:null,picked:[],test:{i:0,score:0,on:false},exam:{sec:0,run:false,h:null,name:''}};
 function knownSet(){var o={};S.words.forEach(function(w){o[w.w.toLowerCase()]=1;});return o;}
 var MOCK={
  reading:[
@@ -978,9 +979,10 @@ function examView(){var M=EN.mock,res=S.mocks||[];
 V.english=function(){
   var due=S.words.filter(function(w){return w.box<3;}).length;
   var lv=S.test?S.test.lvl:'A1–A2';
-  var tabs=[['words','Словарь'],['cards','Карточки'],['texts','Тексты'],['phrases','Фразы для переезда'],['exam','Экзамен'],['test','Тест уровня']];
+  var tabs=[['warm','Разминка'],['words','Словарь'],['cards','Карточки'],['texts','Тексты'],['phrases','Фразы для переезда'],['exam','Экзамен'],['test','Тест уровня']];
   var body='';
-  if(EN.tab==='words'){
+  if(EN.tab==='warm'){body=warmView();}
+  else if(EN.tab==='words'){
     body=pn('s12','Словарь','c-cyan',S.words.length+' слов',
       '<form class="row" data-f="addWord"><input class="inp" id="ww" placeholder="Слово (англ.)" required><input class="inp" id="wt" placeholder="Перевод" required><input class="inp" id="we" placeholder="Эмодзи" style="max-width:110px"><button class="btn b-cyan">Добавить</button></form>'+
       '<div class="list">'+S.words.map(function(w,i){return '<div class="li"><span style="font-size:26px">'+esc(w.e||'📘')+'</span><span class="t"><b>'+esc(w.w)+'</b> · '+esc(w.tr)+'</span><span class="tag c-'+(w.box>=3?'green':'orange')+'">'+(w.box>=3?'знаю':'учу')+'</span><button class="mini" data-a="speak" data-w="'+esc(w.w)+'" aria-label="Озвучить">♪</button>'+edb('word',i)+'<button class="mini" data-a="delWord" data-i="'+i+'" aria-label="Удалить">✕</button></div>';}).join('')+'</div>'+(S.words.length?'':'<div class="muted">Пока пусто. Слова попадают сюда из слова дня, из текстов (нажми на слово) и из фраз.</div>'));
@@ -1530,6 +1532,37 @@ function wkFit(){var wk=document.getElementById('wk');if(!wk)return;var td=wk.qu
 window.addEventListener('resize',function(){wkNav();});
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-wk]');if(!b)return;var wk=document.getElementById('wk');if(!wk)return;var c=wk.querySelector('.wcol');var step=(c?c.getBoundingClientRect().width:250)+12;wk.scrollBy({left:(+b.dataset.wk)*step,behavior:'smooth'});});
 for(var _k in EN_A)A[_k]=EN_A[_k];for(var _k2 in SO_A)A[_k2]=SO_A[_k2];
+
+/* ---------- ежедневная разминка ---------- */
+EN.wu=null;
+function wuInit(){if(EN.wu&&EN.wu.d===TD)return EN.wu;var cards=[];S.words.forEach(function(w,i){if(w.box<3&&cards.length<5)cards.push({src:'w',i:i,w:w.w,tr:w.tr});});
+  var known=(S.wotd&&S.wotd.known)||[],have=knownSet();shuf(WBANK).forEach(function(b){if(cards.length<5&&known.indexOf(b[0])<0&&!have[b[0].toLowerCase()])cards.push({src:'b',w:b[0],tr:b[1]});});
+  var sents=[];allTexts().forEach(function(T){(T.x.match(/[^.!?]+[.!?]/g)||[]).forEach(function(x){x=x.trim();if(x.split(' ').length>=5&&x.split(' ').length<=14)sents.push(x);});});
+  var opts=shuf(sents).slice(0,3);EN.wu={d:TD,step:0,ci:0,cards:cards,flip:false,ph:phrNext(),show:false,lis:{o:opts,a:Math.floor(Math.random()*opts.length),ch:null}};return EN.wu;}
+function warmView(){var W=wuInit(),done=S.warm&&S.warm[TD];var steps=['Карточки','Фраза','Аудирование','Готово'];
+  var bar='<div class="wusteps">'+steps.map(function(t,i){return '<span class="'+(i<W.step||done?'c-green':i===W.step?'c-yellow':'muted')+'">'+(i<W.step||done?'✓ ':(i+1)+'. ')+t+'</span>';}).join('')+'</div>';
+  var inner='';
+  if(done&&W.step<3&&!W.again)inner='<div class="card3d"><span class="word">Разминка на сегодня сделана ✓</span><span class="muted">Возвращайся завтра. Серия разминок: '+warmStreak()+' дн.</span><button class="mini" data-a="wuAgain">Пройти ещё раз</button></div>';
+  else if(W.step===0){var c=W.cards[W.ci];if(!c){W.step=1;return warmView();}
+    inner='<div class="muted" style="font-size:17px">Карточка '+(W.ci+1)+' из '+W.cards.length+(c.src==='b'?' · новое слово':'')+'. Вспомни перевод, потом переверни.</div><button class="card3d" data-a="wuFlip" style="color:inherit"><span class="word">'+esc(W.flip?c.tr:c.w)+'</span><span class="muted" style="font-size:17px">'+(W.flip?'перевод':'нажми, чтобы перевернуть')+'</span></button><div class="row" style="justify-content:center"><button class="mini" data-a="speak" data-w="'+esc(c.w)+'">♪</button>'+(W.flip?'<button class="btn b-pink" data-a="wuCard" data-k="0">'+(c.src==='b'?'Учить':'Не вспомнил')+'</button><button class="btn b-cyan" data-a="wuCard" data-k="1">'+(c.src==='b'?'Уже знаю':'Вспомнил')+'</button>':'')+'</div>';}
+  else if(W.step===1){var i=W.ph;if(i<0){W.step=2;return warmView();}var p=PHRASES[i];
+    inner='<div class="muted" style="font-size:17px">Скажи по-английски вслух, потом открой ответ.</div><div class="card3d"><span class="tag c-orange">'+esc(p[0])+'</span><span style="font-size:26px;font-weight:700">'+esc(p[2])+'</span>'+(W.show?'<span class="word" style="font-size:28px">'+esc(p[1])+'</span>':'')+'</div><div class="row" style="justify-content:center">'+(W.show?'<button class="mini" data-a="speak" data-w="'+esc(p[1])+'">♪</button><button class="btn b-pink" data-a="wuPh" data-k="0">Не вспомнил</button><button class="btn b-cyan" data-a="wuPh" data-k="1">Вспомнил</button>':'<button class="btn b-cyan" data-a="wuShow">Показать ответ</button>')+'</div>';}
+  else if(W.step===2){var L=W.lis;inner='<div class="muted" style="font-size:17px">Послушай предложение (можно несколько раз) и выбери, какое из них прозвучало.</div><div class="row"><button class="btn b-pink" data-a="wuPlay">♪ Слушать</button></div><div class="list">'+L.o.map(function(o,oi){var c=L.ch==null?'':oi===L.a?' good':(oi===L.ch?' badopt':'');return '<button class="opt'+c+'" data-a="wuLis" data-i="'+oi+'"'+(L.ch!=null?' disabled':'')+'>'+esc(o)+'</button>';}).join('')+'</div>'+(L.ch!=null?'<div class="row"><button class="btn b-cyan" data-a="wuFinish">Завершить разминку</button></div>':'');}
+  else inner='<div class="card3d"><span class="word">Готово! +20 XP, +1 ★</span><span class="muted">Привычка «Английский» на сегодня отмечена. Серия разминок: '+warmStreak()+' дн.</span></div>';
+  return pn('s12','Разминка на 10 минут','c-yellow',done?'сегодня ✓':'каждый день',bar+inner);}
+function warmStreak(){var n=0,d=new Date(TODAY);if(!(S.warm&&S.warm[iso(d)]))d=addDays(d,-1);while(S.warm&&S.warm[iso(d)]){n++;d=addDays(d,-1);}return n;}
+var WU_A={
+ wuFlip:function(){EN.wu.flip=!EN.wu.flip;},
+ wuCard:function(e){var W=EN.wu,c=W.cards[W.ci],ok=e.dataset.k==='1';if(c.src==='w'){var w=S.words[c.i];if(w&&w.w===c.w){w.box=ok?w.box+1:0;}}else{if(ok){S.wotd.known.push(c.w);}else if(!knownSet()[c.w.toLowerCase()])S.words.unshift({w:c.w,tr:c.tr,e:'📘',box:0});}gain(2,'int');W.ci++;W.flip=false;if(W.ci>=W.cards.length)W.step=1;},
+ wuShow:function(){EN.wu.show=true;},
+ wuPh:function(e){var W=EN.wu;S.phr=S.phr||{};S.phr[W.ph]=e.dataset.k==='1'?phrBox(W.ph)+1:0;gain(2,'int');W.step=2;setTimeout(function(){speak(W.lis.o[W.lis.a]);},300);},
+ wuPlay:function(){speak(EN.wu.lis.o[EN.wu.lis.a]);return 'norender';},
+ wuLis:function(e){var L=EN.wu.lis;if(L.ch!=null)return;L.ch=+e.dataset.i;if(L.ch===L.a)gain(3,'int');},
+ wuFinish:function(){var W=EN.wu;W.step=3;S.warm=S.warm||{};if(!S.warm[TD]){S.warm[TD]=1;gain(20,'int');star(1);var h=S.habits.filter(function(x){return x.id==='h2';})[0]||S.habits.filter(function(x){return /англ/i.test(x.t);})[0];if(h)S.hlog[h.id+'|'+TD]=true;}},
+ wuAgain:function(){EN.wu=null;wuInit();EN.wu.again=1;},
+ goWarm:function(){EN.tab='warm';location.hash='english';}
+};
+for(var _k3 in WU_A)A[_k3]=WU_A[_k3];
 /* ---------- универсальная правка элементов ---------- */
 var DAY7=[[1,'Пн'],[2,'Вт'],[3,'Ср'],[4,'Чт'],[5,'Пт'],[6,'Сб'],[0,'Вс']];
 var DAYFULL={1:'Понедельник',2:'Вторник',3:'Среда',4:'Четверг',5:'Пятница',6:'Суббота',0:'Воскресенье'};
