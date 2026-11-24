@@ -561,7 +561,8 @@ function pn(cls,title,color,small,body){return '<section class="pn '+cls+'"><div
 function fmtDate(s){var d=new Date(s+'T12:00:00');return d.getDate()+' '+MONTHS[d.getMonth()];}
 function daysTo(s){return Math.round((new Date(s+'T12:00:00')-new Date(TD+'T12:00:00'))/864e5);}
 function money(n){return Math.round(n).toLocaleString('ru-RU')+' ₽';}
-function greeting(){var h=TODAY.getHours();return h<5?'Доброй ночи':h<12?'Доброе утро':h<18?'Добрый день':'Добрый вечер';}
+function greeting(){var h=new Date().getHours();return h<6?'Доброй ночи':h<12?'Доброе утро':h<18?'Добрый день':'Добрый вечер';}
+var lastGreet=greeting();function greetTick(){var g=greeting();if(g!==lastGreet){lastGreet=g;var a=document.activeElement;if(!(a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName))&&document.getElementById('tedit').hidden)render();}}setInterval(greetTick,60000);document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')greetTick();});
 function dateLine(){var d=TODAY;var w=['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'][d.getDay()];return w+' · '+d.getDate()+' '+MONTHS[d.getMonth()];}
 function taskRow(t,opts){opts=opts||{};
   return '<div class="task'+(t.done?' done':'')+(t.main&&!t.done?' main':'')+'" data-tid="'+t.id+'"><button class="ck'+(t.done?' on':'')+'" data-a="task" data-id="'+t.id+'" aria-label="Отметить: '+esc(t.t)+'"></button>'+(t.tm?'<span class="tm">'+t.tm+(t.end&&!opts.wk?'–'+t.end:'')+'</span>':'')+'<span class="t">'+esc(t.t)+'</span><span class="tact">'+
